@@ -28,93 +28,70 @@ from pymeasure.instruments import Instrument
 from pymeasure.instruments.validators import strict_discrete_set
 
 
-class AxisError(Exception):
-    """ Raised when a particular axis causes an error for
-    the Newport ESP300. """
+class AlarmError(Exception):
+    """ Raised when GRBL is entering an alarm state """
 
     MESSAGES = {
-        '00': 'MOTOR TYPE NOT DEFINED',
-        '01': 'PARAMETER OUT OF RANGE',
-        '02': 'AMPLIFIER FAULT DETECTED',
-        '03': 'FOLLOWING ERROR THRESHOLD EXCEEDED',
-        '04': 'POSITIVE HARDWARE LIMIT DETECTED',
-        '05': 'NEGATIVE HARDWARE LIMIT DETECTED',
-        '06': 'POSITIVE SOFTWARE LIMIT DETECTED',
-        '07': 'NEGATIVE SOFTWARE LIMIT DETECTED',
-        '08': 'MOTOR / STAGE NOT CONNECTED',
-        '09': 'FEEDBACK SIGNAL FAULT DETECTED',
-        '10': 'MAXIMUM VELOCITY EXCEEDED',
-        '11': 'MAXIMUM ACCELERATION EXCEEDED',
-        '12': 'Reserved for future use',
-        '13': 'MOTOR NOT ENABLED',
-        '14': 'Reserved for future use',
-        '15': 'MAXIMUM JERK EXCEEDED',
-        '16': 'MAXIMUM DAC OFFSET EXCEEDED',
-        '17': 'ESP CRITICAL SETTINGS ARE PROTECTED',
-        '18': 'ESP STAGE DEVICE ERROR',
-        '19': 'ESP STAGE DATA INVALID',
-        '20': 'HOMING ABORTED',
-        '21': 'MOTOR CURRENT NOT DEFINED',
-        '22': 'UNIDRIVE COMMUNICATIONS ERROR',
-        '23': 'UNIDRIVE NOT DETECTED',
-        '24': 'SPEED OUT OF RANGE',
-        '25': 'INVALID TRAJECTORY MASTER AXIS',
-        '26': 'PARAMETER CHARGE NOT ALLOWED',
-        '27': 'INVALID TRAJECTORY MODE FOR HOMING',
-        '28': 'INVALID ENCODER STEP RATIO',
-        '29': 'DIGITAL I/O INTERLOCK DETECTED',
-        '30': 'COMMAND NOT ALLOWED DURING HOMING',
-        '31': 'COMMAND NOT ALLOWED DUE TO GROUP',
-        '32': 'INVALID TRAJECTORY MODE FOR MOVING'
+        '1': 'Hard limit triggered. Machine position is likely lost due to sudden and immediate halt. Re-homing is highly recommended.',
+        '2': 'G-code motion target exceeds machine travel. Machine position safely retained. Alarm may be unlocked.',
+        '3': 'Reset while in motion. Grbl cannot guarantee position. Lost steps are likely. Re-homing is highly recommended.',
+        '4': 'Probe fail. The probe is not in the expected initial state before starting probe cycle, where G38.2 and G38.3 is not triggered and G38.4 and G38.5 is triggered.',
+        '5': 'Probe fail. Probe did not contact the workpiece within the programmed travel for G38.2 and G38.4.',
+        '6': 'Homing fail. Reset during active homing cycle.',
+        '7': 'Homing fail. Safety door was opened during active homing cycle.',
+        '8': 'Homing fail. Cycle failed to clear limit switch when pulling off. Try increasing pull-off setting or check wiring.',
+        '9': 'Homing fail. Could not find limit switch within search distance. Defined as 1.5 * max_travel on search and 5 * pulloff on locate phases.',
     }
 
     def __init__(self, code):
-        self.axis = str(code)[0]
         self.error = str(code)[1:]
         self.message = self.MESSAGES[self.error]
 
     def __str__(self):
-        return "Newport ESP300 axis %s reported the error: %s" % (
-            self.axis, self.message)
+        return "GRBL reported an ALARM: %s" % (
+            self.message)
 
 class GeneralError(Exception):
-    """ Raised when the Newport ESP300 has a general error.
+    """ Raised when the GRBL has a general error.
     """
 
     MESSAGES = {
-        '1': 'PCI COMMUNICATION TIME-OUT',
-        '4': 'EMERGENCY SOP ACTIVATED',
-        '6': 'COMMAND DOES NOT EXIST',
-        '7': 'PARAMETER OUT OF RANGE',
-        '8': 'CABLE INTERLOCK ERROR',
-        '9': 'AXIS NUMBER OUT OF RANGE',
-        '13': 'GROUP NUMBER MISSING',
-        '14': 'GROUP NUMBER OUT OF RANGE',
-        '15': 'GROUP NUMBER NOT ASSIGNED',
-        '17': 'GROUP AXIS OUT OF RANGE',
-        '18': 'GROUP AXIS ALREADY ASSIGNED',
-        '19': 'GROUP AXIS DUPLICATED',
-        '16': 'GROUP NUMBER ALREADY ASSIGNED',
-        '20': 'DATA ACQUISITION IS BUSY',
-        '21': 'DATA ACQUISITION SETUP ERROR',
-        '23': 'SERVO CYCLE TICK FAILURE',
-        '25': 'DOWNLOAD IN PROGRESS',
-        '26': 'STORED PROGRAM NOT STARTED',
-        '27': 'COMMAND NOT ALLOWED',
-        '29': 'GROUP PARAMETER MISSING',
-        '30': 'GROUP PARAMETER OUT OF RANGE',
-        '31': 'GROUP MAXIMUM VELOCITY EXCEEDED',
-        '32': 'GROUP MAXIMUM ACCELERATION EXCEEDED',
-        '22': 'DATA ACQUISITION NOT ENABLED',
-        '28': 'STORED PROGRAM FLASH AREA FULL',
-        '33': 'GROUP MAXIMUM DECELERATION EXCEEDED',
-        '35': 'PROGRAM NOT FOUND',
-        '37': 'AXIS NUMBER MISSING',
-        '38': 'COMMAND PARAMETER MISSING',
-        '34': 'GROUP MOVE NOT ALLOWED DURING MOTION',
-        '39': 'PROGRAM LABEL NOT FOUND',
-        '40': 'LAST COMMAND CANNOT BE REPEATED',
-        '41': 'MAX NUMBER OF LABELS PER PROGRAM EXCEEDED'
+        '1': 'G-code words consist of a letter and a value. Letter was not found.',
+        '2': 'Numeric value format is not valid or missing an expected value.',
+        '3': 'Grbl \'$\' system command was not recognized or supported.',
+        '4': 'Negative value received for an expected positive value.',
+        '5': 'Homing cycle is not enabled via settings.',
+        '6': 'Minimum step pulse time must be greater than 3usec',
+        '7': 'EEPROM read failed. Reset and restored to default values.',
+        '8': 'Grbl \'$\' command cannot be used unless Grbl is IDLE. Ensures smooth operation during a job.',
+        '9': 'G-code locked out during alarm or jog state',
+        '10': 'Soft limits cannot be enabled without homing also enabled.',
+        '11': 'Max characters per line exceeded. Line was not processed and executed.',
+        '12': '(Compile Option) Grbl \'$\' setting value exceeds the maximum step rate supported.',
+        '13': 'Safety door detected as opened and door state initiated.',
+        '14': '(Grbl-Mega Only) Build info or startup line exceeded EEPROM line length limit.',
+        '15': 'Jog target exceeds machine travel. Command ignored.',
+        '16': 'Jog command with no \'=\' or contains prohibited g-code.',
+        '17': 'Laser mode requires PWM output.',
+        '20': 'Unsupported or invalid g-code command found in block.',
+        '21': 'More than one g-code command from same modal group found in block.',
+        '22': 'Feed rate has not yet been set or is undefined.',
+        '23': 'G-code command in block requires an integer value.',
+        '24': 'Two G-code commands that both require the use of the XYZ axis words were detected in the block.',
+        '25': 'A G-code word was repeated in the block.',
+        '26': 'A G-code command implicitly or explicitly requires XYZ axis words in the block, but none were detected.',
+        '27': 'N line number value is not within the valid range of 1 - 9,999,999.',
+        '28': 'A G-code command was sent, but is missing some required P or L value words in the line.',
+        '29': 'Grbl supports six work coordinate systems G54-G59. G59.1, G59.2, and G59.3 are not supported.',
+        '30': 'The G53 G-code command requires either a G0 seek or G1 feed motion mode to be active. A different motion was active.',
+        '31': 'There are unused axis words in the block and G80 motion mode cancel is active.',
+        '32': 'A G2 or G3 arc was commanded but there are no XYZ axis words in the selected plane to trace the arc.',
+        '33': 'The motion command has an invalid target. G2, G3, and G38.2 generates this error, if the arc is impossible to generate or if the probe target is the current position.',
+        '34': 'A G2 or G3 arc, traced with the radius definition, had a mathematical error when computing the arc geometry. Try either breaking up the arc into semi-circles or quadrants, or redefine them with the arc offset definition.',
+        '35': 'A G2 or G3 arc, traced with the offset definition, is missing the IJK offset word in the selected plane to trace the arc.',
+        '36': 'There are unused, leftover G-code words that aren\'t used by any command in the block.',
+        '37': 'The G43.1 dynamic tool length offset command cannot apply an offset to an axis other than its configured axis. The Grbl default axis is the Z-axis.',
+        '38': 'Tool number greater than max supported value.',
     }
 
     def __init__(self, code):
@@ -124,9 +101,9 @@ class GeneralError(Exception):
     def __str__(self):
         return "Newport ESP300 reported the error: %s" % (
             self.message)
-
+# Not yet implmented
 class Axis(object):
-    """ Represents an axis of the Newport ESP300 Motor Controller,
+    """ Represents an axis of the GRBL,
     which can have independent parameters from the other axes.
     """
 
@@ -229,12 +206,12 @@ class Axis(object):
             sleep(interval)
 
 
-class ESP300(Instrument):
+class ArduoinoGRBL(Instrument):
     """ Represents the Newport ESP 300 Motion Controller
     and provides a high-level for interacting with the instrument.
 
-    By default this instrument is constructed with x, y, and phi
-    attributes that represent axes 1, 2, and 3. Custom implementations
+    By default this instrument is constructed with x, y, z, and a
+    attributes that represent axes 1, 2, 3, 4. Custom implementations
     can overwrite this depending on the avalible axes. Axes are controlled
     through an :class:`Axis <pymeasure.instruments.newport.esp300.Axis>`
     class.
@@ -248,7 +225,7 @@ class ESP300(Instrument):
     )
 
     def __init__(self, resourceName, **kwargs):
-        super(ESP300, self).__init__(
+        super(ArduoinoGRBL, self).__init__(
             resourceName,
             "ArduoinoGRBL Motion Controller",
             **kwargs
@@ -275,7 +252,7 @@ class ESP300(Instrument):
         code = self.error
         while code != 0:
             if code > 100:
-                errors.append(AxisError(code))
+                errors.append(AlarmError(code))
             else:
                 errors.append(GeneralError(code))
             code = self.error
