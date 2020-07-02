@@ -207,13 +207,13 @@ class Axis(object):
 
 
 class ArduoinoGRBL(Instrument):
-    """ Represents the Newport ESP 300 Motion Controller
+    """ Represents the GRBL Controller
     and provides a high-level for interacting with the instrument.
 
     By default this instrument is constructed with x, y, z, and a
     attributes that represent axes 1, 2, 3, 4. Custom implementations
     can overwrite this depending on the avalible axes. Axes are controlled
-    through an :class:`Axis <pymeasure.instruments.newport.esp300.Axis>`
+    through an :class:`Axis <pymeasure.instruments.newport.ArduinoGRBL.Axis>`
     class.
     """
 
@@ -231,10 +231,10 @@ class ArduoinoGRBL(Instrument):
             **kwargs
         )
         # Defines default axes, which can be overwritten
-        self.x = Axis(1, self)
-        self.y = Axis(2, self)
-        self.z = Axis(3, self)
-        self.a = Axis(4, self)
+        self.x = Axis('X', self)
+        self.y = Axis('Y', self)
+        self.z = Axis('Z', self)
+        self.a = Axis('A', self)
 
     def clear_errors(self):
         """ Clears the error messages by checking until a 0 code is
