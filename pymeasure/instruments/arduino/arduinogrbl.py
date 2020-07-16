@@ -99,7 +99,7 @@ class GeneralError(Exception):
         self.message = self.MESSAGES[self.error]
 
     def __str__(self):
-        return "Newport ESP300 reported the error: %s" % (
+        return "GRBL reported the error: %s" % (
             self.message)
 # Not yet implmented
 class Axis(object):
@@ -293,3 +293,8 @@ class ArduoinoGRBL(Instrument):
         """ Shuts down the controller by disabling all of the axes.
         """
         self.disable()
+
+    def getconfig(self):
+        """ Returns configuration values to terminal
+        """
+    
