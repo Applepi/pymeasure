@@ -297,4 +297,12 @@ class ArduoinoGRBL(Instrument):
     def getconfig(self):
         """ Returns configuration values to terminal
         """
+        self.ask("$$")
     
+    def globalconfig(self, command, value):
+        """ Allows configuration of GRBL values as defined here:
+        https://github.com/gnea/grbl/wiki/Grbl-v1.1-Configuration
+        """
+        self.ask("$%d=%f" % (command, value))
+
+        
