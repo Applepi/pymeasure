@@ -255,7 +255,7 @@ class ArduoinoGRBL(Instrument):
         https://github.com/gnea/grbl/wiki/Grbl-v1.1-Configuration 
         """
 
-        StepPulse = 10
+        self.StepPulse = 10
         """ 
         $0 – Step pulse, microseconds
 
@@ -268,7 +268,7 @@ class ArduoinoGRBL(Instrument):
         We recommend something around 10 microseconds, which is the default value.
         """
 
-        StepIdleDelay = 25
+        self.StepIdleDelay = 25
         """ 
         $1 - Step idle delay, milliseconds
 
@@ -279,7 +279,7 @@ class ArduoinoGRBL(Instrument):
         Again, just to repeat, you can keep all axes always enabled by setting $1=255.
         """
 
-        StepPortInver = 0
+        self.StepPortInver = 0
         """ 
         $2 – Step port invert, mask
 
@@ -302,7 +302,7 @@ class ArduoinoGRBL(Instrument):
         the setting should now read $2=5 (step port invert mask:00000101). 
         """
 
-        DirectionPortInvert = 0
+        self.DirectionPortInvert = 0
         """ 
         $3 – Direction port invert, mask
 
@@ -315,8 +315,7 @@ class ArduoinoGRBL(Instrument):
         step port invert mask and stores which axes to invert as bit flags
         """
 
-
-        StepEnableInvert = 0
+        self.StepEnableInvert = 0
         """ 
         $4 - Step enable invert, boolean
 
@@ -325,7 +324,7 @@ class ArduoinoGRBL(Instrument):
         typing $4=1. Disable with $4=0. (May need a power cycle to load the change.) 
         """
 
-        LimitPinInvert = 0
+        self.LimitPinInvert = 0
         """ 
         $5 - Limit pins invert, boolean
 
@@ -338,7 +337,7 @@ class ArduoinoGRBL(Instrument):
         may be disabled in config.h.
         """
 
-        ProbePinInvert = 0
+        self.ProbePinInvert = 0
         """  
         $6 - Probe pin invert, boolean
 
@@ -349,7 +348,7 @@ class ArduoinoGRBL(Instrument):
         load the change.
         """
 
-        StatusReport = 1
+        self.StatusReport = 1
         """
         $10 - Status report, mask
 
@@ -392,7 +391,7 @@ class ArduoinoGRBL(Instrument):
         Buffer Data 	2 	    Enabled Buf: field appears with planner and serial RX available buffer.
         """
 
-        JunctionDeviation = 0.010
+        self.JunctionDeviation = 0.010
         """
         $11 - Junction deviation, mm
 
@@ -403,7 +402,7 @@ class ArduoinoGRBL(Instrument):
         the machine needs to slow down to safely go through the corner without losing steps.
         """
 
-        ArcTolernce = 0.002
+        self.ArcTolernce = 0.002
         """
         $12 – Arc tolerance, mm
 
@@ -418,7 +417,7 @@ class ArduoinoGRBL(Instrument):
         has fewer lines to deal with.
         """
 
-        ReportInches = 0
+        self.ReportInches = 0
         """
         $13 - Report inches, boolean
 
@@ -430,7 +429,7 @@ class ArduoinoGRBL(Instrument):
         $13=0 to set back to mm.
         """
 
-        SoftLimits = 0
+        self.SoftLimits = 0
         """ 
         $20 - Soft limits, boolean
 
@@ -449,7 +448,7 @@ class ArduoinoGRBL(Instrument):
         and $20=0 to disable.
         """
 
-        HardLimits = 0
+        self.HardLimits = 0
         """
 
         $21 - Hard limits, boolean
@@ -476,7 +475,7 @@ class ArduoinoGRBL(Instrument):
         Remember it's a purely a safety feature.
         """
 
-        HomingCycle = 1
+        self.HomingCycle = 1
         """
         $22 - Homing cycle, boolean
 
@@ -497,7 +496,7 @@ class ArduoinoGRBL(Instrument):
         switches for both hard limits AND homing. They play nice with each other.
         """
 
-        HomingDirection = 0
+        self.HomingDirection = 0
         """
         $23 - Homing dir invert, mask
 
@@ -510,7 +509,7 @@ class ArduoinoGRBL(Instrument):
         you want to invert and search for in the opposite direction.
         """
 
-        HomingFeed = 25.000
+        self.HomingFeed = 25.000
         """
         $24 - Homing feed, mm/min
 
@@ -520,7 +519,7 @@ class ArduoinoGRBL(Instrument):
         and precise machine zero locating.
         """
 
-        HomingSeek = 500.000
+        self.HomingSeek = 500.000
         """
         $25 - Homing seek, mm/min
 
@@ -529,7 +528,7 @@ class ArduoinoGRBL(Instrument):
         crashing into your limit switches if they come in too fast.
         """
 
-        HomingDebounce = 250
+        self.HomingDebounce = 250
         """
         $26 - Homing debounce, milliseconds
         
@@ -541,7 +540,7 @@ class ArduoinoGRBL(Instrument):
         In most cases, 5-25 milliseconds is fine.
         """
         
-        HomingPulloff = 1.000
+        self.HomingPulloff = 1.000
         """
         $27 - Homing pull-off, mm
 
@@ -552,7 +551,7 @@ class ArduoinoGRBL(Instrument):
         error for failing to clear it.
         """
 
-        MaxSpindleSpeed = 1000
+        self.MaxSpindleSpeed = 1000
         """
         $30 - Max spindle speed, RPM
 
@@ -565,7 +564,7 @@ class ArduoinoGRBL(Instrument):
         to tweak how this operates.
         """
 
-        MinSpindleSpeed = 0
+        self.MinSpindleSpeed = 0
         """
         $31 - Min spindle speed, RPM
 
@@ -574,7 +573,7 @@ class ArduoinoGRBL(Instrument):
         the spindle is disabled and PWM output is 0V.
         """
 
-        LaserMode = 0
+        self.LaserMode = 0
         """
         $32 - Laser mode, boolean
 
@@ -589,6 +588,11 @@ class ArduoinoGRBL(Instrument):
         This is the default operation of a milling machine to allow a pause to let the spindle change speeds.
         """
 
+    def verified_write(self, command):
+        a = self.ask(command)
+        if a != "ok\r\n":
+            self.errors + a
+            print("Error was encountered while performing %s" % command)
 
 
     def clear_errors(self):
@@ -632,7 +636,7 @@ class ArduoinoGRBL(Instrument):
                 raise e
         return axes
 
-    def getconfig(self):
+    def get_stored_config(self):
         """ Returns configuration values to terminal
         """
         self.write("$$")
@@ -642,10 +646,51 @@ class ArduoinoGRBL(Instrument):
             print(repr(a))
             a = self.read()
     
-    def globalconfig(self, command, value):
+    def global_config(self, command, value='\0'):
         """ Allows configuration of GRBL values as defined here:
         https://github.com/gnea/grbl/wiki/Grbl-v1.1-Configuration
         """
-        self.ask("$%d=%f" % (command, value))
+        if value == '\0':
+            self.ask("$%d" % (command))
+        else:
+            self.ask("$%d=%f" % (command, value))
 
+    def setconfig(self):
+        """
+        Sets current configuration to the current stored
+        """
+        self.verified_write("$0=%d" % self.StepPulse)
+        self.verified_write("$1=%d" % self.StepIdleDelay)
+        self.verified_write("$2=%d" % self.StepPortInver)
+        self.verified_write("$3=%d" % self.DirectionPortInvert)
+        self.verified_write("$4=%d" % self.StepEnableInvert)
+        self.verified_write("$5=%d" % self.LimitPinInvert)
+        self.verified_write("$6=%d" % self.ProbePinInvert)
+        self.verified_write("$10=%d" % self.StatusReport)
+        self.verified_write("$11=%f" % self.JunctionDeviation)
+        self.verified_write("$12=%f" % self.ArcTolernce)
+        self.verified_write("$13=%d" % self.ReportInches)
+        self.verified_write("$20=%d" % self.SoftLimits)
+        self.verified_write("$21=%d" % self.HardLimits)
+        self.verified_write("$22=%d" % self.HomingCycle)
+        self.verified_write("$23=%d" % self.HomingDirection)
+        self.verified_write("$24=%f" % self.HomingFeed)
+        self.verified_write("$25=%f" % self.HomingSeek)
+        self.verified_write("$26=%d" % self.HomingDebounce)
+        self.verified_write("$27=%f" % self.HomingPulloff)
+        self.verified_write("$30=%f" % self.MaxSpindleSpeed)
+        self.verified_write("$31=%f" % self.MinSpindleSpeed)
+        self.verified_write("$32=%d" % self.LaserMode)
+        self.verified_write("$100=%f" % self.x.StepsPermm)
+        self.verified_write("$101=%f" % self.y.StepsPermm)
+        self.verified_write("$102=%f" % self.z.StepsPermm)
+        self.verified_write("$110=%f" % self.x.MaxRate)
+        self.verified_write("$111=%f" % self.y.MaxRate)
+        self.verified_write("$112=%f" % self.z.MaxRate)
+        self.verified_write("$120=%f" % self.x.MaxAcceleration)
+        self.verified_write("$121=%f" % self.y.MaxAcceleration)
+        self.verified_write("$122=%f" % self.z.MaxAcceleration)
+        self.verified_write("$130=%f" % self.x.MaxTravel)
+        self.verified_write("$131=%f" % self.y.MaxTravel)
+        self.verified_write("$132=%f" % self.z.MaxTravel)
         
