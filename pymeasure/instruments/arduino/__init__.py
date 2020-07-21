@@ -22,4 +22,4 @@
 # THE SOFTWARE.
 #
 
-from .arduinogrbl import ArduinoGRBL
+from .arduinogrbl import ArduoinoGRBL

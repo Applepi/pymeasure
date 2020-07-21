@@ -226,9 +226,7 @@ class ArduoinoGRBL(Instrument):
 
     def __init__(self, resourceName, **kwargs):
         super(ArduoinoGRBL, self).__init__(
-            resourceName,
-            "ArduoinoGRBL Motion Controller",
-            **kwargs
+            resourceName, "ArduoinoGRBL Motion Controller", **kwargs
         )
         # Defines default axes, which can be overwritten
         self.x = Axis('X', self)

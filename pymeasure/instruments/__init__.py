@@ -29,7 +29,7 @@ from .resources import list_resources
 from .validators import discreteTruncate
 
 from . import advantest
-from . import arduinogrbl
+from . import arduino
 from . import agilent
 from . import ametek
 from . import ami
