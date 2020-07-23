@@ -113,7 +113,7 @@ class Axis(object):
         self.axis = str(axis)
         self.controller = controller
         
-        self.StepsPermm = 250.000
+        self.StepsPermm = 250.0
         """
         $100, $101 and $102 – [X,Y,Z] steps/mm
 
@@ -133,7 +133,7 @@ class Axis(object):
         Compute this value for every axis and write these settings to Grbl.
         """
 
-        self.MaxRate = 500.000
+        self.MaxRate = 500.0
         """
         $110, $111 and $112 – [X,Y,Z] Max rate, mm/min
 
@@ -156,7 +156,7 @@ class Axis(object):
         WARNING: Too Fast moves can corrupt the Arduino firmware
         """
         
-        self.MaxAcceleration = 10.000
+        self.MaxAcceleration = 10.0
         """
         $120, $121, $122 – [X,Y,Z] Acceleration, mm/sec^2
 
@@ -176,7 +176,7 @@ class Axis(object):
         the loading on your machine is different when moving in all axes together.
         """
 
-        self.MaxTravel = 200.000
+        self.MaxTravel = 200.0
         """$130, $131, $132 – [X,Y,Z] Max travel, mm
 
         This sets the maximum travel from end to end for each axis in mm. This is 
@@ -348,7 +348,7 @@ class ArduoinoGRBL(Instrument):
         load the change.
         """
 
-        self.StatusReport = 1
+        self.StatusReport = 2
         """
         $10 - Status report, mask
 
@@ -590,8 +590,9 @@ class ArduoinoGRBL(Instrument):
 
     def verified_write(self, command):
         a = self.ask(command)
+        sleep(0.1)
         if a != "ok\r\n":
-            self.errors + a
+            print(a)
             print("Error was encountered while performing %s" % command)
 
 
