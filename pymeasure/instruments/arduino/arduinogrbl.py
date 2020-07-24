@@ -198,31 +198,29 @@ class Axis(object):
         command = self.axis + command
         return self.controller.values(command, **kwargs)
 
-    def enable(self):
-        """ Enables motion for the axis. """
-        self.write("MO")
-
-    def disable(self):
-        """ Disables motion for the axis. """
-        self.write("MF")
-
-    def home(self, type=1):
-        """ Drives the axis to the home position, which may be the negative
-        hardware limit for some actuators (e.g. LTA-HS).
-        type can take integer values from 0 to 6.
+    def relative_move(self, position, feedrate=None):
+        """ Move axis relative to the current stage position
         """
-        home_type = strict_discrete_set(type, [0,1,2,3,4,5,6])
-        self.write("OR%d" % home_type)
+        if a is None:
+            a = self.MaxRate
+        self.controller.verified_write("G91 G0 %s%f F%f" % (self.axis, position, a))
+    
+    def absolute_move(self, position, feedrate=None):
+        """ Move Axis to Absolute position realtive to home
+        """
+        if a is None:
+            a = self.MaxRate
+        self.controller.verified_write("G92 G0 %s%f F%f" % (self.axis, position, a))
 
     def define_position(self, position):
         """ Overwrites the value of the current position with the given
         value. """
-        self.write("DH%g" % position)
+        self.controller.verified_write("G92 %s%f" % (self.axis, position))
 
     def zero(self):
         """ Resets the axis position to be zero at the current poisiton.
         """
-        self.write("DH")
+        self.controller.verified_write("G92 %s0" % self.axis)
 
 
 
@@ -637,6 +635,11 @@ class ArduoinoGRBL(Instrument):
                 raise e
         return axes
 
+    def home(self):
+        """ Uses GRBL homing function to home axis using $H
+        """
+        self.verified_write("$H")
+
     def get_stored_config(self):
         """ Returns configuration values to terminal
         """
@@ -659,6 +662,10 @@ class ArduoinoGRBL(Instrument):
     def setconfig(self):
         """
         Sets current configuration to the current stored
+        There is probably a better way to implment but that's above my paygrade
+        It's currently having an issue with $4 when trying to set it, might be MAC
+        specific.
+        Calling this script without changing any values will restore to firmware defaul settings
         """
         self.verified_write("$0=%d" % self.StepPulse)
         self.verified_write("$1=%d" % self.StepIdleDelay)
